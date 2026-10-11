@@ -5,3 +5,5 @@
 wrangler.jsonc
 .wrangler
 node_modules
+CNAME
+README.md
