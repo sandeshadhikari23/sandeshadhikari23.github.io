@@ -733,15 +733,19 @@ p {
   fill: var(--text);
 }
 
-/* glyphs draw themselves as the card scrolls in */
-.js .ability path[pathLength] {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
+/* Keep icons complete unless their visible drawing animation is running. */
+.ability__glyph path[pathLength] {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
 }
 
-.js .ability.is-in path[pathLength] {
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset 1.5s ease 0.25s;
+.ability__glyph.is-visible path[pathLength] {
+  animation: ability-draw 1.6s ease both;
+}
+
+@keyframes ability-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
 }
 
 .ability h4 {
@@ -789,7 +793,9 @@ p {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .ability path[pathLength] {
+  .ability__glyph path[pathLength],
+  .ability__glyph.is-visible path[pathLength] {
+    animation: none;
     stroke-dasharray: none;
     stroke-dashoffset: 0;
   }

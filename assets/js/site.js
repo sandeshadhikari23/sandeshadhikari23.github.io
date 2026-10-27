@@ -203,6 +203,21 @@
       revealer.observe(el);
     });
 
+    // Replay the small ability drawings on re-entry, independently of the
+    // one-time card reveal. Observe the icon, not the much taller card.
+    var glyphs = document.querySelectorAll('.ability__glyph');
+    var glyphObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          entry.target.classList.toggle('is-visible', entry.isIntersecting && entry.intersectionRatio >= 0.5);
+        });
+      },
+      { threshold: [0, 0.5], rootMargin: '-72px 0px 0px 0px' }
+    );
+    glyphs.forEach(function (glyph) {
+      glyphObserver.observe(glyph);
+    });
+
     // Highlight the nav link of the section currently in view.
     var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav__links a'));
     var sections = navLinks
