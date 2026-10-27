@@ -203,19 +203,26 @@
       revealer.observe(el);
     });
 
-    // Replay the small ability drawings on re-entry, independently of the
-    // one-time card reveal. Observe the icon, not the much taller card.
-    var glyphs = document.querySelectorAll('.ability__glyph');
-    var glyphObserver = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          entry.target.classList.toggle('is-visible', entry.isIntersecting && entry.intersectionRatio >= 0.5);
+    // Keep the small drawings moving while visible, using the same frame loop
+    // as the live demos. Static icons remain complete when motion is reduced.
+    document.querySelectorAll('.ability__glyph').forEach(function (glyph) {
+      var paths = glyph.querySelectorAll('path[pathLength]');
+      var elapsed = 0;
+      if (SA.reducedMotion) return;
+
+      SA.loop(glyph, function (dt) {
+        elapsed = (elapsed + dt) % 5000;
+        paths.forEach(function (path, index) {
+          var t = Math.max(0, elapsed - Math.min(index * 120, 360));
+          var progress = Math.min(1, t / 2000);
+          // Draw, hold the complete icon, then smoothly erase for the next cycle.
+          var offset = t < 3800
+            ? 1 - progress * progress * (3 - 2 * progress)
+            : Math.min(1, (t - 3800) / 800);
+          path.style.strokeDasharray = '1 1';
+          path.style.strokeDashoffset = String(offset);
         });
-      },
-      { threshold: [0, 0.5], rootMargin: '-72px 0px 0px 0px' }
-    );
-    glyphs.forEach(function (glyph) {
-      glyphObserver.observe(glyph);
+      });
     });
 
     // Highlight the nav link of the section currently in view.

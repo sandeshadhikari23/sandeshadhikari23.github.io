@@ -733,19 +733,10 @@ p {
   fill: var(--text);
 }
 
-/* Keep icons complete unless their visible drawing animation is running. */
+/* Icons stay complete until the visible-only frame loop animates their strokes. */
 .ability__glyph path[pathLength] {
   stroke-dasharray: 1 1;
   stroke-dashoffset: 0;
-}
-
-.ability__glyph.is-visible path[pathLength] {
-  animation: ability-draw 1.6s ease both;
-}
-
-@keyframes ability-draw {
-  from { stroke-dashoffset: 1; }
-  to { stroke-dashoffset: 0; }
 }
 
 .ability h4 {
@@ -793,9 +784,7 @@ p {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ability__glyph path[pathLength],
-  .ability__glyph.is-visible path[pathLength] {
-    animation: none;
+  .ability__glyph path[pathLength] {
     stroke-dasharray: none;
     stroke-dashoffset: 0;
   }
